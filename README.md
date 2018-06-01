@@ -1,4 +1,4 @@
-# List 07: Dynamic Programming
+# Lista 07: Dynamic Programming
 
 Aluno|Matrícula
 -|-
