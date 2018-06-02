@@ -4,17 +4,18 @@
 #include <sstream>
 #include <cstring>
 
+//buffer limit
 #define STR_LIMIT 5000
 //matrix size limits
 #define MAX_M 1000
 #define MAX_N 1000
 
 int state[MAX_M][MAX_N];
-/* this matrix keeps track of the operations
-x        Deletion
-c        Insertion of a character c
--        Keep
-[c->d]   Change (c to d)
+/* 
+    this matrix keeps track of the operations
+    i        Insertion
+    r        Removal
+    s        Substitution
 */
 char operation[MAX_M][MAX_N];
 
@@ -22,6 +23,29 @@ char operation[MAX_M][MAX_N];
 int c_i = 1, c_r = 1, c_s = 1;
 
 using std::string;
+
+int edit_distance(const string& str_1, const string& str_2);
+std::stack<string> stack_operations(const string& str_1, const string& str_2);
+string show_operations(std::stack<string>& operation_stack);
+
+
+int main()
+{
+    string str_1, str_2;
+    int cost;
+    string result;
+    std::stack<string> op_stack;
+
+    std::cout << "Insert two strings in the format \"str1 str2\": ";
+    std::cin >> str_1 >> str_2;
+
+    cost = edit_distance(str_1, str_2);
+    op_stack = stack_operations(str_1, str_2);
+    result = show_operations(op_stack);
+
+    std::cout << "\nThe minimum edit cost is: " << cost << std::endl;
+    std::cout << "\nThe edit script is: \n" << result << std::endl;
+}
 
 /*
     Bottom-up implementation returning a string with the operations.
@@ -66,10 +90,10 @@ int edit_distance(const string& str_1, const string& str_2)
         return state[m][n];
 }
 
-string show_operations(const string& str_1, const string& str_2)
+std::stack<string> stack_operations(const string& str_1, const string& str_2)
 {
     int i = str_1.size(), j = str_2.size();
-    std::stack<string> S;
+    std::stack<string> operation_stack;
     char operations_buffer[STR_LIMIT];
 
     while (i != 0 or j != 0)
@@ -95,28 +119,21 @@ string show_operations(const string& str_1, const string& str_2)
             }
 
             if (strncmp(operations_buffer, "keep", 5) != 0)
-                S.push(operations_buffer);
+                operation_stack.push(operations_buffer);
     }
 
+    return operation_stack;
+}
+
+string show_operations(std::stack<string>& operation_stack)
+{
     std::ostringstream os;
 
-    while (not S.empty())
+    while (not operation_stack.empty())
     {
-        os << S.top();
-        S.pop();
+        os << operation_stack.top();
+        operation_stack.pop();
     }
 
     return os.str();
-}
-
-int main()
-{
-    string str_1, str_2;
-    std::cout << "Insert two strings in the format \"str1 str2\": ";
-    std::cin >> str_1 >> str_2;
-
-    int result = edit_distance(str_1, str_2);
-
-    std::cout << "\nThe edit distance is: " << result << std::endl;
-    std::cout << "\nThe edit script is: \n" << show_operations(str_1, str_2) << std::endl;
 }
