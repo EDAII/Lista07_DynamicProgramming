@@ -48,7 +48,7 @@ int main()
 }
 
 /*
-    Bottom-up implementation returning a string with the operations.
+    Bottom-up implementation returning the edit matrix.
     Strongly based on @edsomjr's implementation with some improvements 
     on readability and minor tweaks.
 */
